@@ -18,14 +18,14 @@ const game = (() => {
   const renderMove = (event) => {
     if (event.target.textContent !== "") return; //this won't allow selecting a space that's already marked
     nodeMaker('p', event.target, currentPlayer.weapon);
-    playGame(gameBoard);
+    playGame(gameBoard, player1, player2);
   }
   gameBoard.forEach(e => e.addEventListener('click', renderMove));
   return {changeCurrPlayer};
 }
 )();
 
-function playGame(gameBoard){
+function playGame(gameBoard, player1, player2){
   game.changeCurrPlayer();
   const winArrMaker = (startIndex, increment) => {
     const newArr = []
@@ -45,10 +45,10 @@ function playGame(gameBoard){
     winArrMaker(2, 2)
   ]
   for(let arr in winArrays){
-    if (winArrays[arr].every(e => e === 'x')){
-      let win;
-    }else if(winArrays[arr].every(e => e === 'y')){
-      let win;
+    if (winArrays[arr].every(e => e === player1.weapon)){
+      nodeMaker('p', document.body, `${player1.name} won!`);
+    }else if(winArrays[arr].every(e => e === player2.weapon)){
+      nodeMaker('p', document.body, `${player2.name} won!`);
     }
   }
 }
