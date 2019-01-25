@@ -2,9 +2,18 @@
   width: 400px;
   height: 400px;
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 
 .box{
   border: solid gray 1px;
+  text-align: center;
+}
+
+.box p{
+  margin: 0;
+  font-size: 72px;
+  height: 100px;
+  line-height: 100px;
+  white-space: nowrap;
 }
