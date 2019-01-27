@@ -5,50 +5,84 @@ const nodeMaker = (nodeType, parent, text) => {
   return newNode;
 }
 
-const game = (() => {
-  const gameBoard = Array.from(document.querySelectorAll(".box"));
-  const player1 = {name: "", weapon: "x",}
-  const player2 = {name: "", weapon: "o",}
-  let currentPlayer = Object.assign({}, player1);
-  const changeCurrPlayer = () => {
-    if (currentPlayer.weapon === player1.weapon){
-      currentPlayer = Object.assign({}, player2)
-    }else currentPlayer = Object.assign({}, player1);
+const gameBoard = (() => {
+  const board = Array.from(document.querySelectorAll(".box"));
+  const winnerArrays = [
+    [board[0], board[1], board[2]],
+    [board[3], board[4], board[5]],
+    [board[6], board[7], board[8]],
+    [board[0], board[3], board[6]],
+    [board[1], board[4], board[7]],
+    [board[2], board[5], board[8]],
+    [board[0], board[4], board[8]],
+    [board[2], board[4], board[6]],
+  ];
+  const getWinnerArrays = () => winnerArrays;
+  const startEventListener = () => {
+    board.forEach(e => e.addEventListener('click', playGame));
   }
-  const renderMove = (event) => {
-    if (event.target.textContent !== "") return; //this won't allow selecting a space that's already marked
-    nodeMaker('p', event.target, currentPlayer.weapon);
-    playGame(gameBoard, player1, player2);
+  const stopEventListener = () => {
+    board.forEach(e => e.removeEventListener('click', playGame));
   }
-  gameBoard.forEach(e => e.addEventListener('click', renderMove));
-  return {changeCurrPlayer};
+  const clearBoard = () => {
+    board.forEach(e => {
+      if(e.firstChild) e.removeChild(e.firstChild);
+    });
+  }
+  return {stopEventListener, startEventListener, getWinnerArrays, clearBoard};
 }
 )();
 
-function playGame(gameBoard, player1, player2){
-  game.changeCurrPlayer();
-  const winArrMaker = (startIndex, increment) => {
-    const newArr = []
-    for(let i = startIndex; newArr.length < 3; i += increment){
-      newArr.push(gameBoard[i].textContent);
-    }
-    return newArr;
+const CreatePlayers = () => {
+  const player1 = {name: null, weapon: 'x'};
+  const player2 = {name: null, weapon: 'o'};
+  let playerTurn = Object.assign({}, player1);
+  const setPlayers = (playerX, playerO) =>{
+    player1.name = `${playerX}`;
+    player2.name = `${playerO}`;
   }
-  const winArrays = [
-    winArrMaker(0, 1),
-    winArrMaker(3, 1),
-    winArrMaker(6, 1),
-    winArrMaker(0, 3),
-    winArrMaker(1, 3),
-    winArrMaker(2, 3),
-    winArrMaker(0, 4),
-    winArrMaker(2, 2)
-  ]
-  for(let arr in winArrays){
-    if (winArrays[arr].every(e => e === player1.weapon)){
-      nodeMaker('p', document.body, `${player1.name} won!`);
-    }else if(winArrays[arr].every(e => e === player2.weapon)){
-      nodeMaker('p', document.body, `${player2.name} won!`);
+  const changeTurn = () => {
+    if (playerTurn.name === player1.name){
+      playerTurn = Object.assign({}, player2);
+    }else playerTurn = Object.assign({}, player1);
+    return playerTurn;
+  }
+  const nameChecker = () => {
+    if(player1.name || player2.name){
+      return 1;
+    }else return null;
+  }
+  return {setPlayers, changeTurn, nameChecker};
+};
+
+let players = undefined;
+
+const gameControls = (() => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', startGame);
+  function startGame (event){
+    event.preventDefault();
+    gameBoard.clearBoard();
+    players = CreatePlayers();
+    players.setPlayers(form.elements.playerXsetter.value, form.elements.playerOsetter.value);
+    if(!players.nameChecker()){
+      nodeMaker('p', document.body, 'Please set names for both players');
+      return;
+    }
+    gameBoard.startEventListener();
+  }
+}
+)();
+
+function playGame(event){
+  if (event.target.textContent !== "") return; //this won't allow selecting a space that's already marked
+  let currentPlayer = players.changeTurn();
+  nodeMaker('p', event.target, currentPlayer.weapon); //this will log an 'x' or 'o' to the board
+  const winnerArrays = gameBoard.getWinnerArrays();
+  for(let arr in winnerArrays){
+    if (winnerArrays[arr].every(e => e.textContent === currentPlayer.weapon)){
+      nodeMaker('p', document.body, `${currentPlayer.name} won!`);
+      gameBoard.stopEventListener();
     }
   }
 }
