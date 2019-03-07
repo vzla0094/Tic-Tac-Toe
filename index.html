@@ -8,19 +8,22 @@
     <link type="text/css" rel="stylesheet" href="style.css">
 </head>
 <body>
-  <form>
-    <label>
-      Set name for player O
-      <input name="playerOsetter">
-    </label>
-
-    <label>
-      Set name for player X
-      <input name="playerXsetter">
-    </label>
-    <input type="submit" value="Start game!">
-  </form>
+  
   <div id="main_container">
+    <div id="formContainer">
+      <form>
+        <label>
+          Set name for player O
+          <input name="playerOsetter">
+        </label><br>
+    
+        <label>
+          Set name for player X
+          <input name="playerXsetter">
+        </label><br>
+        <input class="mdc-button" type="submit" value="Start game!">
+      </form>
+    </div>
     <div id="gameboard">
       <div id="oneone" class="box"></div>
       <div id="onetwo" class="box"></div>
@@ -31,6 +34,9 @@
       <div id="threeone" class="box"></div>
       <div id="threetwo" class="box"></div>
       <div id="threethree" class="box"></div>
+    </div>
+    <div id="results">
+      
     </div>
   </div>
     <script src="practica.js"></script>

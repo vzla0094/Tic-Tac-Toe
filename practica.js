@@ -81,7 +81,7 @@ function playGame(event){
   const winnerArrays = gameBoard.getWinnerArrays();
   for(let arr in winnerArrays){
     if (winnerArrays[arr].every(e => e.textContent === currentPlayer.weapon)){
-      nodeMaker('p', document.body, `${currentPlayer.name} won!`);
+      nodeMaker('p', document.getElementById('results'), `${currentPlayer.name} won!`);
       gameBoard.stopEventListener();
     }
   }
